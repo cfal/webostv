@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"sync"
+	"time"
 	"github.com/gdamore/tcell"
 	"github.com/rivo/tview"
 	"github.com/cfal/webostv"
@@ -9,7 +11,9 @@ import (
 
 type help struct {
 	*tview.TextView
-    pointerSocket *webostv.PointerSocket
+	ps *webostv.PointerSocket
+	psUsageTime time.Time
+	psMutex sync.Mutex
 	updateInfo func(str string)
 }
 
@@ -34,17 +38,29 @@ func newHelp() *help {
 		return x + 1, y + 1, width - 2, height - 2
 	})
 
-	p, err := tv.NewPointerSocket();
-	if err != nil {
-		print("Could not connect to pointer socket")
-		app.Stop()
-		return nil
-	}
-
 	return &help{
 		TextView: w,
-		pointerSocket: p,
 	}
+}
+
+func (h *help) getPointerSocket() *webostv.PointerSocket {
+	h.psMutex.Lock()
+	defer h.psMutex.Unlock()
+
+	if h.ps != nil && time.Since(h.psUsageTime).Seconds() > 30 {
+		h.ps = nil
+	}
+	if h.ps == nil {
+		p, err := tv.NewPointerSocket()
+		if err != nil {
+			print("Could not connect to pointer socket")
+			app.Stop()
+			return nil
+		}
+		h.ps = p
+	}
+	h.psUsageTime = time.Now()
+	return h.ps
 }
 
 func (h *help) InputHandler() func(event *tcell.EventKey, setFocus func(p tview.Primitive)) {
@@ -69,25 +85,25 @@ func (h *help) InputHandler() func(event *tcell.EventKey, setFocus func(p tview.
 				}
 			}()
 		case key == tcell.KeyEnter:
-			go h.pointerSocket.ButtonEnter()
+			go h.getPointerSocket().ButtonEnter()
 		case key == tcell.KeyLeft:
-			go h.pointerSocket.ButtonLeft()
+			go h.getPointerSocket().ButtonLeft()
 		case key == tcell.KeyRight:
-			go h.pointerSocket.ButtonRight()
+			go h.getPointerSocket().ButtonRight()
 		case key == tcell.KeyUp:
-			go h.pointerSocket.ButtonUp()
+			go h.getPointerSocket().ButtonUp()
 		case key == tcell.KeyDown:
-			go h.pointerSocket.ButtonDown()
+			go h.getPointerSocket().ButtonDown()
 		case key == tcell.KeyESC || (key == tcell.KeyRune && (kr == 'b')):
-			go h.pointerSocket.ButtonBack()
+			go h.getPointerSocket().ButtonBack()
 		case key == tcell.KeyRune && (kr == 'h'):
-			go h.pointerSocket.ButtonHome()
+			go h.getPointerSocket().ButtonHome()
 		case key == tcell.KeyRune && (kr == 'i'):
-			go h.pointerSocket.ButtonInfo()
+			go h.getPointerSocket().ButtonInfo()
 		case key == tcell.KeyRune && (kr == 'd'):
-			go h.pointerSocket.ButtonDash()
+			go h.getPointerSocket().ButtonDash()
 		case key == tcell.KeyRune && (kr == 's'):
-			go h.pointerSocket.Button("SETUP")
+			go h.getPointerSocket().Button("SETUP")
 		}
 	})
 }
