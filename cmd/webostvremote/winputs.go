@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/pkg/errors"
 	"github.com/rivo/tview"
-	"github.com/snabb/webostv"
+	"github.com/cfal/webostv"
 	"sync"
 )
 

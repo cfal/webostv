@@ -6,7 +6,7 @@ import (
 	"github.com/inconshreveable/log15"
 	"github.com/ogier/pflag"
 	"github.com/rivo/tview"
-	"github.com/snabb/webostv"
+	"github.com/cfal/webostv"
 	"math/rand"
 	"os"
 	"path/filepath"

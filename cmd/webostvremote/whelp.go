@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/gdamore/tcell"
 	"github.com/rivo/tview"
-	"github.com/snabb/webostv"
+	"github.com/cfal/webostv"
 )
 
 type help struct {
