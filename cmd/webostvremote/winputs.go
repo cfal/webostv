@@ -94,7 +94,9 @@ func (i *inputs) update(tvInputs []webostv.TvExternalInput) {
 	i.Clear()
 	for row, input := range tvInputs {
 		i.SetCell(row, 0, tview.NewTableCell(input.Label))
-		i.SetCell(row, 1, tview.NewTableCell(fmt.Sprintf("%v", input.Connected)))
+		if input.Connected {
+			i.SetCell(row, 1, tview.NewTableCell("active"))
+		}
 	}
 	i.ScrollToBeginning()
 }
