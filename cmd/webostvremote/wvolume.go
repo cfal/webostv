@@ -13,4 +13,7 @@ func newVolume() *volume {
 
 func (v *volume) update(volume int) {
 	v.SetPercent(volume)
+	go func() {
+		app.Draw()
+	}()
 }
