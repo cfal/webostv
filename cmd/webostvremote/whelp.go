@@ -20,13 +20,14 @@ func newHelp() *help {
 	w.SetTitle("Controls")
 	w.SetWrap(false)
 	fmt.Fprintln(w, "Tab ⇥ / ⇤ next / prev")
-	fmt.Fprintln(w, "V         volume")
 	fmt.Fprintln(w, ".         play/pause");
-	fmt.Fprintln(w, "C         channels")
-	fmt.Fprintln(w, "I         inputs")
-	fmt.Fprintln(w, "A         apps")
 	fmt.Fprintln(w, "arrows    move")
-	fmt.Fprintln(w, "Q / Esc   quit")
+	fmt.Fprintln(w, "Enter     enter")
+	fmt.Fprintln(w, "Escape/B  back")
+	fmt.Fprintln(w, "H         home")
+	fmt.Fprintln(w, "I         info")
+	fmt.Fprintln(w, "D         dash")
+	fmt.Fprintln(w, "Q         quit")
 	fmt.Fprintln(w, "Ctrl+X    turn off+quit")
 	w.SetDrawFunc(func(screen tcell.Screen, x, y, width, height int) (int, int, int, int) {
 		w.ScrollToBeginning()
@@ -67,7 +68,26 @@ func (h *help) InputHandler() func(event *tcell.EventKey, setFocus func(p tview.
 					h.updateInfo("Failed to play");
 				}
 			}()
-			
+		case key == tcell.KeyEnter:
+			go h.pointerSocket.ButtonEnter()
+		case key == tcell.KeyLeft:
+			go h.pointerSocket.ButtonLeft()
+		case key == tcell.KeyRight:
+			go h.pointerSocket.ButtonRight()
+		case key == tcell.KeyUp:
+			go h.pointerSocket.ButtonUp()
+		case key == tcell.KeyDown:
+			go h.pointerSocket.ButtonDown()
+		case key == tcell.KeyESC || (key == tcell.KeyRune && (kr == 'b')):
+			go h.pointerSocket.ButtonBack()
+		case key == tcell.KeyRune && (kr == 'h'):
+			go h.pointerSocket.ButtonHome()
+		case key == tcell.KeyRune && (kr == 'i'):
+			go h.pointerSocket.ButtonInfo()
+		case key == tcell.KeyRune && (kr == 'd'):
+			go h.pointerSocket.ButtonDash()
+		case key == tcell.KeyRune && (kr == 's'):
+			go h.pointerSocket.Button("SETUP")
 		}
 	})
 }

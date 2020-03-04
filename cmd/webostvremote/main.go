@@ -97,9 +97,9 @@ func (app *myApp) inputCapture(event *tcell.EventKey) *tcell.EventKey {
 				return nil
 			}
 		}
-		app.changeFocus(currentFocus, app.wVolume)
+		app.changeFocus(currentFocus, app.wHelp)
 		return nil
-	case tcell.KeyExit, tcell.KeyESC:
+	case tcell.KeyExit:
 		app.Stop()
 		return nil
 	case tcell.KeyCtrlX:
@@ -117,18 +117,6 @@ func (app *myApp) inputCapture(event *tcell.EventKey) *tcell.EventKey {
 	switch key {
 	case tcell.KeyRune:
 		switch event.Rune() {
-		case 'm', 'M':
-			app.changeFocus(currentFocus, app.wHelp)
-			return nil
-		case 'c', 'C':
-			app.changeFocus(currentFocus, app.wChannels)
-			return nil
-		case 'i', 'I':
-			app.changeFocus(currentFocus, app.wInputs)
-			return nil
-		case 'a', 'A':
-			app.changeFocus(currentFocus, app.wApps)
-			return nil
 		case 'q', 'Q':
 			app.Stop()
 			return nil
