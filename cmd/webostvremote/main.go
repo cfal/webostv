@@ -33,7 +33,7 @@ type myApp struct {
 
 	wTvInfo   *tvInfo
 	wVolume   *volume
-	wHelp     tview.Primitive
+	wHelp     *help
 	wSelInfo  *selInfo
 	wChannels *channels
 	wInputs   *inputs
@@ -117,8 +117,8 @@ func (app *myApp) inputCapture(event *tcell.EventKey) *tcell.EventKey {
 	switch key {
 	case tcell.KeyRune:
 		switch event.Rune() {
-		case 'v', 'V':
-			app.changeFocus(currentFocus, app.wVolume)
+		case 'm', 'M':
+			app.changeFocus(currentFocus, app.wHelp)
 			return nil
 		case 'c', 'C':
 			app.changeFocus(currentFocus, app.wChannels)
@@ -142,6 +142,7 @@ func (app *myApp) initWidgets() {
 	app.wTvInfo = newTvInfo()
 	app.wVolume = newVolume()
 	app.wHelp = newHelp()
+	app.wHelp.updateInfo = app.wSelInfo.update
 
 	app.wSelInfo = newSelInfo()
 
