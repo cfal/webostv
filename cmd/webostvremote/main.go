@@ -95,7 +95,7 @@ func (app *myApp) inputCapture(event *tcell.EventKey) *tcell.EventKey {
 			if v == currentFocus {
 				app.changeFocus(currentFocus, k)
 				return nil
-			} 
+			}
 		}
 		app.changeFocus(currentFocus, app.wVolume)
 		return nil
@@ -181,8 +181,8 @@ func (app *myApp) initLayout() {
 	app.nextFocus = map[tview.Primitive]tview.Primitive{
 		app.wChannels: app.wInputs,
 		app.wInputs:   app.wApps,
-		app.wApps:     app.wVolume,
-		app.wVolume:   app.wChannels,
+		app.wApps:     app.wHelp,
+		app.wHelp:     app.wChannels,
 	}
 }
 
@@ -266,6 +266,7 @@ func main() {
 
 	app.initWidgets()
 	app.initLayout()
+	app.changeFocus(nil, app.wHelp)
 	app.SetInputCapture(app.inputCapture)
 
 	var wg sync.WaitGroup

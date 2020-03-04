@@ -6,11 +6,15 @@ import (
 	"github.com/rivo/tview"
 )
 
-func newHelp() tview.Primitive {
+type help struct {
+	*tview.TextView
+}
+
+func newHelp() *help {
 	w := tview.NewTextView()
 	w.SetBorder(true)
 	w.SetScrollable(true)
-	w.SetTitle("Help")
+	w.SetTitle("Controls")
 	w.SetWrap(false)
 	fmt.Fprintln(w, "Tab ⇥ / ⇤ next / prev")
 	fmt.Fprintln(w, "V         volume")
@@ -27,5 +31,23 @@ func newHelp() tview.Primitive {
 		w.ScrollToBeginning()
 		return x + 1, y + 1, width - 2, height - 2
 	})
-	return w
+	return &help{w}
+}
+
+func (h *help) InputHandler() func(event *tcell.EventKey, setFocus func(p tview.Primitive)) {
+	return h.WrapInputHandler(func(event *tcell.EventKey, setFocus func(p tview.Primitive)) {
+		key := event.Key()
+		var kr rune
+		if key == tcell.KeyRune {
+			kr = event.Rune()
+		}
+		switch {
+		case key == tcell.KeyRight || (key == tcell.KeyRune && kr == '+'):
+			go tv.AudioVolumeUp()
+			// XXX check err
+		case key == tcell.KeyLeft || (key == tcell.KeyRune && kr == '-'):
+			go tv.AudioVolumeDown()
+			// XXX check err
+		}
+	})
 }
