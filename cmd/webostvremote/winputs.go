@@ -40,6 +40,7 @@ func (i *inputs) selected(row, column int) {
 	if set {
 		go tv.TvSwitchInput(sel.Id)
 		// XXX check err
+		go app.changeFocus(app.GetFocus(), app.wHelp)
 	}
 }
 

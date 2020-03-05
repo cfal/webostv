@@ -56,6 +56,7 @@ func (a *apps) selected(row, column int) {
 	}
 
 	go tv.ApplicationManagerLaunch(sel.Id, payload)
+	go app.changeFocus(app.GetFocus(), app.wHelp)
 	// XXX check err
 }
 

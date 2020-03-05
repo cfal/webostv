@@ -34,10 +34,7 @@ func (i *ime) InputHandler() func(event *tcell.EventKey, setFocus func(p tview.P
 			go tv.ImeDeleteCharacters(1)
 		case tcell.KeyEnter:
 			tv.ImeSendEnterKey()
-			go func() {
-				app.changeFocus(nil, app.wHelp)
-				app.Draw()
-			}()
+			go app.changeFocus(app.GetFocus(), app.wHelp)
 		}
 	})
 }
