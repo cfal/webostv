@@ -3,7 +3,7 @@ module github.com/cfal/webostv
 go 1.14
 
 require (
-	github.com/gdamore/tcell v1.3.0
+	github.com/gdamore/tcell v1.3.1-0.20200228195341-b03a4607a44a
 	github.com/go-stack/stack v1.8.0 // indirect
 	github.com/gorilla/websocket v1.4.0
 	github.com/inconshreveable/log15 v0.0.0-20200109203555-b30bc20e4fd1
