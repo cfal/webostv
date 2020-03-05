@@ -34,6 +34,7 @@ type myApp struct {
 	wTvInfo   *tvInfo
 	wVolume   *volume
 	wHelp     *help
+	wIme      *ime
 	wSelInfo  *selInfo
 	wChannels *channels
 	wInputs   *inputs
@@ -131,6 +132,7 @@ func (app *myApp) initWidgets() {
 	app.wVolume = newVolume()
 	app.wHelp = newHelp()
 	app.wHelp.updateInfo = app.wSelInfo.update
+	app.wIme = newIme()
 
 	app.wSelInfo = newSelInfo()
 
@@ -151,6 +153,7 @@ func (app *myApp) initLayout() {
 			AddItem(tview.NewFlex().
 				SetDirection(tview.FlexRow).
 				AddItem(app.wHelp, 0, 2, false).
+				AddItem(app.wIme, 0, 2, false).
 				AddItem(app.wVolume, 3, 0, false), 0, 3, false).
 			AddItem(tview.NewFlex().
 				SetDirection(tview.FlexRow).
@@ -171,7 +174,8 @@ func (app *myApp) initLayout() {
 	app.SetRoot(layout, true)
 
 	app.nextFocus = map[tview.Primitive]tview.Primitive{
-		app.wHelp: app.wInputs,
+		app.wHelp: app.wIme,
+		app.wIme: app.wInputs,
 		app.wInputs:   app.wApps,
 		app.wApps:     app.wChannels,
 		app.wChannels:     app.wHelp,
