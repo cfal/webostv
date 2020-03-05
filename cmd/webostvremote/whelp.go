@@ -69,6 +69,9 @@ func (h *help) InputHandler() func(event *tcell.EventKey, setFocus func(p tview.
 		var kr rune
 		if key == tcell.KeyRune {
 			kr = event.Rune()
+			if kr >= 'a' && kr <= 'z' {
+				kr -= ('a' - 'A')
+			}
 		}
 		switch {
 		case key == tcell.KeyRune && (kr == '+' || kr == '='):
@@ -84,26 +87,34 @@ func (h *help) InputHandler() func(event *tcell.EventKey, setFocus func(p tview.
 					h.updateInfo("Failed to play");
 				}
 			}()
+		}
+
+		// Pointer socket keys
+		if time.Since(h.psUsageTime).Milliseconds() < 150 {
+			return
+		}
+
+		switch {
 		case key == tcell.KeyEnter:
 			go h.getPointerSocket().ButtonEnter()
-		case key == tcell.KeyLeft:
+		case key == tcell.KeyLeft || (key == tcell.KeyRune && kr == 'J'):
 			go h.getPointerSocket().ButtonLeft()
-		case key == tcell.KeyRight:
+		case key == tcell.KeyRight || (key == tcell.KeyRune && kr == 'L'):
 			go h.getPointerSocket().ButtonRight()
-		case key == tcell.KeyUp:
+		case key == tcell.KeyUp || (key == tcell.KeyRune && kr == 'I'):
 			go h.getPointerSocket().ButtonUp()
-		case key == tcell.KeyDown:
+		case key == tcell.KeyDown || (key == tcell.KeyRune && kr == 'K'):
 			go h.getPointerSocket().ButtonDown()
-		case key == tcell.KeyESC || (key == tcell.KeyRune && (kr == 'b')):
+		case key == tcell.KeyESC || (key == tcell.KeyRune && (kr == 'B')):
 			go h.getPointerSocket().ButtonBack()
-		case key == tcell.KeyRune && (kr == 'h'):
+		case key == tcell.KeyRune && (kr == 'H'):
 			go h.getPointerSocket().ButtonHome()
-		case key == tcell.KeyRune && (kr == 'i'):
+		case key == tcell.KeyRune && (kr == 'I'):
 			go h.getPointerSocket().ButtonInfo()
-		case key == tcell.KeyRune && (kr == 'd'):
+		case key == tcell.KeyRune && (kr == 'D'):
 			go h.getPointerSocket().ButtonDash()
-		case key == tcell.KeyRune && (kr == 's'):
-			go h.getPointerSocket().Button("SETUP")
+		case key == tcell.KeyRune && (kr == 'X'):
+			go h.getPointerSocket().ButtonExit()
 		}
 	})
 }
