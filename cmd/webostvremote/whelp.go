@@ -48,6 +48,7 @@ func (h *help) getPointerSocket() *webostv.PointerSocket {
 	defer h.psMutex.Unlock()
 
 	if h.ps != nil && time.Since(h.psUsageTime).Seconds() > 30 {
+		h.ps.Close()
 		h.ps = nil
 	}
 	if h.ps == nil {
