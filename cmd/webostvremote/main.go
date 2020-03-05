@@ -147,31 +147,34 @@ func (app *myApp) initWidgets() {
 func (app *myApp) initLayout() {
 	layoutLeft := tview.NewFlex().
 		SetDirection(tview.FlexRow).
-		AddItem(app.wTvInfo, 0, 2, false).
-		AddItem(app.wVolume, 3, 0, false).
-		AddItem(app.wHelp, 0, 2, false)
-
-	layoutRight := tview.NewFlex().
-		SetDirection(tview.FlexRow).
 		AddItem(tview.NewFlex().
-			AddItem(app.wChannels, 0, 4, false).
+			AddItem(tview.NewFlex().
+				SetDirection(tview.FlexRow).
+				AddItem(app.wHelp, 0, 2, false).
+				AddItem(app.wVolume, 3, 0, false), 0, 3, false).
 			AddItem(tview.NewFlex().
 				SetDirection(tview.FlexRow).
 				AddItem(app.wInputs, 0, 1, false).
 				AddItem(app.wApps, 0, 2, false), 0, 3, false), 0, 3, false).
 		AddItem(app.wSelInfo, 0, 1, false)
 
+	layoutRight := tview.NewFlex().
+		SetDirection(tview.FlexRow).
+		AddItem(app.wChannels, 0, 4, false).
+		AddItem(app.wTvInfo, 0, 2, false)
+
 	layout := tview.NewFlex().
-		AddItem(layoutLeft, 0, 1, false).
-		AddItem(layoutRight, 0, 2, false)
+		SetDirection(tview.FlexColumn).
+		AddItem(layoutLeft, 0, 3, false).
+		AddItem(layoutRight, 0, 1, false)
 
 	app.SetRoot(layout, true)
 
 	app.nextFocus = map[tview.Primitive]tview.Primitive{
-		app.wChannels: app.wInputs,
+		app.wHelp: app.wInputs,
 		app.wInputs:   app.wApps,
-		app.wApps:     app.wHelp,
-		app.wHelp:     app.wChannels,
+		app.wApps:     app.wChannels,
+		app.wChannels:     app.wHelp,
 	}
 }
 
