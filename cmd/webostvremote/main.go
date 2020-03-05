@@ -78,6 +78,7 @@ func (app *myApp) changeFocus(currentFocus, newFocus tview.Primitive) {
 	}); ok {
 		newFocus.selectionChanged(newFocus.GetSelection())
 	}
+	go app.Draw()
 }
 
 func (app *myApp) inputCapture(event *tcell.EventKey) *tcell.EventKey {
