@@ -239,7 +239,7 @@ func initTv(address string) {
 }
 
 func main() {
-	var err error
+	rand.Seed(time.Now().UnixNano())
 
 	pflag.Usage = func() {
 		fmt.Fprintln(os.Stderr, "usage:", os.Args[0], "[OPTION]... [ADDRESS]\n")
@@ -274,8 +274,6 @@ func main() {
 	}
 
 	app.logger.Debug("starting")
-
-	rand.Seed(time.Now().UnixNano())
 
 	initTv(address)
 
@@ -326,16 +324,16 @@ func main() {
 		// XXX check errors ?
 	}()
 
-	err = app.Run()
-	if err != nil {
+	if err := app.Run(); err != nil {
 		fmt.Fprintln(os.Stderr, "error:", err)
 		app.logger.Error("app.Run() returned error", "err", err)
+		os.Exit(1)
+		return
 	}
 
 	close(quit)
 	wg.Wait()
 
-	var err2 error
 errorChReadLoop:
 	for {
 		select {
@@ -343,22 +341,21 @@ errorChReadLoop:
 			if myErr.err != nil {
 				fmt.Fprintln(os.Stderr, "error in", myErr.where+":", myErr.err)
 				app.logger.Error("error", "goroutine", myErr.where, "err", myErr.err)
-				err2 = myErr.err
+				os.Exit(1)
+				return
 			}
 		default:
 			break errorChReadLoop
 		}
 	}
-	err3 := tv.Close()
-	if err3 != nil {
-		fmt.Fprintln(os.Stderr, "error:", err3)
-		app.logger.Error("tv.Close() returned error", "err", err3)
+
+	if err := tv.Close(); err != nil {
+		fmt.Fprintln(os.Stderr, "error:", err)
+		app.logger.Error("tv.Close() returned error", "err", err)
+		os.Exit(1)
+		return
 	}
 	app.logger.Debug("exiting")
-
-	if err != nil || err2 != nil || err3 != nil {
-		os.Exit(1)
-	}
 }
 
 func openMyStore() (store *Store) {
