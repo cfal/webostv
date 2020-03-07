@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"github.com/gdamore/tcell"
 	"github.com/inconshreveable/log15"
@@ -39,7 +40,7 @@ type myApp struct {
 	wChannels *channels
 	wInputs   *inputs
 	wApps     *apps
-	nextFocus map[tview.Primitive]tview.Primitive
+	focusOrder []tview.Primitive
 
 	logger log15.Logger
 }
@@ -81,26 +82,48 @@ func (app *myApp) changeFocus(currentFocus, newFocus tview.Primitive) {
 	go app.Draw()
 }
 
-func (app *myApp) inputCapture(event *tcell.EventKey) *tcell.EventKey {
+func (app *myApp) getFocusIndex(p tview.Primitive) (int, error) {
+	for i := 0; i < len(app.focusOrder); i++ {
+		if app.focusOrder[i] == p {
+			return i, nil
+		}
+	}
+	return -1, errors.New("No focus order")
+}
+
+func (app *myApp) nextFocus(previous bool) {
 	currentFocus := app.GetFocus()
+	if focusIndex, err := app.getFocusIndex(currentFocus); err == nil {
+		var nextFocusIndex int
+		if previous {
+			nextFocusIndex = (focusIndex + len(app.focusOrder) - 1) % len(app.focusOrder)
+		} else {
+			nextFocusIndex = (focusIndex + 1) % len(app.focusOrder)
+		}
+		app.changeFocus(currentFocus, app.focusOrder[nextFocusIndex])
+	} else {
+		app.logger.Error("Could not get focus order")
+		app.Stop()
+	}
+}
+
+func (app *myApp) inputCapture(event *tcell.EventKey) *tcell.EventKey {
 	key := event.Key()
 	switch key {
 	case tcell.KeyTAB:
-		if nf, ok := app.nextFocus[currentFocus]; ok {
-			app.changeFocus(currentFocus, nf)
-		} else {
-			app.changeFocus(currentFocus, app.wChannels)
-		}
+		app.nextFocus(false)
 		return nil
 	case tcell.KeyBacktab:
-		for k, v := range app.nextFocus {
-			if v == currentFocus {
-				app.changeFocus(currentFocus, k)
-				return nil
-			}
-		}
-		app.changeFocus(currentFocus, app.wHelp)
+		app.nextFocus(true)
 		return nil
+	case tcell.KeyRune:
+		if event.Rune() == '[' {
+			app.nextFocus(true)
+			return nil
+		} else if event.Rune() == ']' {
+			app.nextFocus(false)
+			return nil
+		}
 	case tcell.KeyExit:
 		app.Stop()
 		return nil
@@ -112,6 +135,7 @@ func (app *myApp) inputCapture(event *tcell.EventKey) *tcell.EventKey {
 		app.Stop()
 		return nil
 	}
+	currentFocus := app.GetFocus()
 	if _, ok := currentFocus.(*tview.InputField); ok {
 		return event
 	}
@@ -174,12 +198,12 @@ func (app *myApp) initLayout() {
 
 	app.SetRoot(layout, true)
 
-	app.nextFocus = map[tview.Primitive]tview.Primitive{
-		app.wHelp: app.wIme,
-		app.wIme: app.wInputs,
-		app.wInputs:   app.wApps,
-		app.wApps:     app.wChannels,
-		app.wChannels:     app.wHelp,
+	app.focusOrder = []tview.Primitive {
+		app.wHelp,
+		app.wIme,
+		app.wInputs,
+		app.wApps,
+		app.wChannels,
 	}
 }
 
