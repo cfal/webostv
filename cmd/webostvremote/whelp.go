@@ -54,8 +54,8 @@ func (h *help) getPointerSocket() *webostv.PointerSocket {
 	if h.ps == nil {
 		p, err := tv.NewPointerSocket()
 		if err != nil {
-			print("Could not connect to pointer socket")
 			app.Stop()
+			print("Could not connect to pointer socket")
 			return nil
 		}
 		h.ps = p
@@ -81,7 +81,7 @@ func (h *help) InputHandler() func(event *tcell.EventKey, setFocus func(p tview.
 		case key == tcell.KeyRune && (kr == '-' || kr == '_'):
 			go tv.AudioVolumeDown()
 			// XXX check err
-		case key == tcell.KeyRune && kr == '.':
+		case key == tcell.KeyRune && kr == ' ':
 			go func() {
 				// This does both play and pause.
 				if err := tv.MediaControlsPlay(); err != nil {
