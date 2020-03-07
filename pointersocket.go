@@ -137,6 +137,14 @@ func (ps *PointerSocket) ButtonAsterisk() (err error) {
 	return ps.Button("ASTERISK")
 }
 
+func (ps *PointerSocket) ButtonMenu() (err error) {
+	return ps.Button("MENU")
+}
+
+func (ps *PointerSocket) ButtonSAP() (err error) {
+	return ps.Button("SAP")
+}
+
 func (ps *PointerSocket) ButtonCC() (err error) {
 	return ps.Button("CC")
 }

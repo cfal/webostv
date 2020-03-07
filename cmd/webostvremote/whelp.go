@@ -108,14 +108,16 @@ func (h *help) InputHandler() func(event *tcell.EventKey, setFocus func(p tview.
 			go h.getPointerSocket().ButtonDown()
 		case key == tcell.KeyESC || key == tcell.KeyBackspace || key == tcell.KeyBackspace2 || (key == tcell.KeyRune && (kr == 'B')):
 			go h.getPointerSocket().ButtonBack()
-		case key == tcell.KeyRune && (kr == 'H'):
+		case key == tcell.KeyRune && kr == 'H':
 			go h.getPointerSocket().ButtonHome()
-		case key == tcell.KeyRune && (kr == 'I'):
+		case key == tcell.KeyRune && kr == 'I':
 			go h.getPointerSocket().ButtonInfo()
-		case key == tcell.KeyRune && (kr == 'D'):
+		case key == tcell.KeyRune && kr == 'D':
 			go h.getPointerSocket().ButtonDash()
-		case key == tcell.KeyRune && (kr == 'X'):
+		case key == tcell.KeyRune && kr == 'X':
 			go h.getPointerSocket().ButtonExit()
+		case key == tcell.KeyRune && kr == 'M':
+			go h.getPointerSocket().ButtonMenu()
 		}
 	})
 }
