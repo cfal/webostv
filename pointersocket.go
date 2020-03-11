@@ -141,6 +141,10 @@ func (ps *PointerSocket) ButtonMenu() (err error) {
 	return ps.Button("MENU")
 }
 
+func (ps *PointerSocket) ButtonScreenRemote() (err error) {
+	return ps.Button("SCREEN_REMOTE")
+}
+
 func (ps *PointerSocket) ButtonSAP() (err error) {
 	return ps.Button("SAP")
 }

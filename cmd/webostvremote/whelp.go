@@ -118,6 +118,8 @@ func (h *help) InputHandler() func(event *tcell.EventKey, setFocus func(p tview.
 			go h.getPointerSocket().ButtonExit()
 		case key == tcell.KeyRune && kr == 'M':
 			go h.getPointerSocket().ButtonMenu()
+		case key == tcell.KeyRune && kr == 'N':
+			go h.getPointerSocket().ButtonScreenRemote()
 		}
 	})
 }
